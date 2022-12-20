@@ -13,11 +13,10 @@ using System.Threading.Tasks;
 namespace HttpServer_1.Controllers
 {
     [HttpController("accounts")]
-    internal class Accounts
+    internal class Accounts : Controller
     {
         //GetAccounts, GetAccountById и SaveAccount
 
-        private static string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=SteamDB;Integrated Security=True";
         private static AccountDAO accountDAO = new AccountDAO(connectionString);
 
         [HttpGET(@"^\d+$")]
