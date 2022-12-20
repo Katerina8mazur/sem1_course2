@@ -17,12 +17,20 @@ namespace HttpServer_1.Models
         [DBField("password")]
         public string Password { get; set; }
 
+        [DBField("account_name")]
+        public string Name { get; set; }
 
-        public Account(int id, string login, string password)
+        [DBField("avatar")]
+        public string Avatar { get; set; }
+
+
+        public Account(int id, string login, string password, string name, string avatar)
         {
             Id = id;
             Login = login;
             Password = password;
+            Name = name;
+            Avatar = avatar;
         }
 
         public Account()
