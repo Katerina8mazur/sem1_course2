@@ -9,56 +9,92 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace HttpServer_1.Controllers
 {
     [HttpController("accounts")]
     internal class Accounts : Controller
     {
-        //GetAccounts, GetAccountById и SaveAccount
-
         private static AccountDAO accountDAO = new AccountDAO(connectionString);
 
-        [HttpGET(@"^\d+$")]
-        public MethodResponse<Account?> GetAccountById(int id)
-            => new MethodResponse<Account?>(accountDAO.Get(id));
+        [HttpGET(@"^login$")]
+        public MethodResponse ShowAuthorizationPage() 
+            => new MethodResponse(new View("/login.html"));
 
-        [HttpGET("^$")]
-        [OnlyForAuthorized]
-        public MethodResponse<List<Account>>  GetAccounts()
-            => new MethodResponse<List<Account>>(accountDAO.GetAll());
+        [HttpGET(@"^register$")]
+        public MethodResponse ShowRegistrationPage()
+            => new MethodResponse(new View("/register.html"));
 
-        [HttpPOST("^save$")]
-        public MethodResponse SaveAccount(string login, string password)
+        [HttpPOST("^login$")]
+        public MethodResponse Login(string login, string password)
         {
-            accountDAO.Insert(login, password);
-            return new MethodResponse();
-        }
+            var accountId = accountDAO.Check(HttpUtility.UrlDecode(login), HttpUtility.UrlDecode(password));
 
-        //Get /accounts/ - список аккаунтов в формате json
-        //Get /accounts/{id} - информация об одном аккаунте
-        //Post /accounts/ - добавлять инф на сервер - принимает параметры через body
-
-        //надо брать все данные из бд
-
-        [HttpPOST("^$")]
-        public MethodResponse<bool> Login(string login, string password)
-        {
-            var accountId = accountDAO.Check(login, password);
-
-            Cookie? cookie = null;
             if (accountId >= 0)
             {
                 var session = SessionManager.CreateSession(accountId, login);
-                cookie = new Cookie("SessionId", session.Id.ToString());
-            }    
+                Cookie? cookie = new Cookie("SessionId", session.Id.ToString(), "/");
+                return new MethodResponse("/recipes", cookie);
+            }
 
-            return new MethodResponse<bool>(accountId >= 0, cookie);
+            return new MethodResponse(new View("/login.html", new { Incorrect = true, InputLogin = HttpUtility.UrlDecode(login) }));
         }
 
-        [HttpGET("^info$")]
-        [OnlyForAuthorized(needAccountId: true)]
-        public MethodResponse<Account> GetAccountInfo(string _, int id)
-            => GetAccountById(id);
+        [HttpPOST("^register$")]
+        public MethodResponse Register(string login, string name, string password, string passwordConfirm)
+        {
+            if (password != passwordConfirm)
+                return new MethodResponse(new View("/register.html", new { Error = "incorrect_password", 
+                    InputLogin = HttpUtility.UrlDecode(login),
+                    InputName = HttpUtility.UrlDecode(name)
+                }));
+            if (!accountDAO.IsLoginAvailable(login))
+                return new MethodResponse(new View("/register.html", new { Error = "existing_login", 
+                    InputLogin = HttpUtility.UrlDecode(login),
+                    InputName = HttpUtility.UrlDecode(name)
+                }));
+
+            accountDAO.Insert(HttpUtility.UrlDecode(login), HttpUtility.UrlDecode(name), HttpUtility.UrlDecode(password));
+            return Login(login, password);
+        }
+
+        [HttpGET("^my$")]
+        [OnlyForAuthorized]
+        [NeedAccountId]
+        public MethodResponse ShowCurrentAccount(string _, int id)
+            => ShowAccountById(id, id);
+
+        [HttpGET(@"^\d+$")]
+        [NeedAccountId]
+        public MethodResponse ShowAccountById(int id, int currentAccountId)
+        {
+            var account = accountDAO.Get(id);
+            if (account == null)
+                throw new ServerException(HttpStatusCode.NotFound);
+            return new MethodResponse(new View("/profile.html", new { Profile = account, CurrentAccountId = currentAccountId }));
+        }
+
+        //[HttpGET("^$")]
+        //[OnlyForAuthorized]
+        //public MethodResponse<List<Account>>  GetAccounts()
+        //    => new MethodResponse<List<Account>>(accountDAO.GetAll());
+
+        //[HttpPOST("^save$")]
+        //public MethodResponse SaveAccount(string login, string password)
+        //{
+        //    accountDAO.Insert(login, password);
+        //    return new MethodResponse();
+        //}
+
+        ////Get /accounts/ - список аккаунтов в формате json
+        ////Get /accounts/{id} - информация об одном аккаунте
+        ////Post /accounts/ - добавлять инф на сервер - принимает параметры через body
+
+        ////надо брать все данные из бд
+
+
+
+
     }
 }

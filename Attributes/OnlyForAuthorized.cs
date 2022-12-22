@@ -8,11 +8,5 @@ namespace HttpServer_1.Attributes
 {
     internal class OnlyForAuthorized: Attribute
     {
-        public bool NeedAccountId;
-
-        public OnlyForAuthorized(bool needAccountId = false)
-        {
-            NeedAccountId = needAccountId;
-        }
     }
 }

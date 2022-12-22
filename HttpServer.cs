@@ -1,5 +1,6 @@
 ﻿using HttpServer_1.Attributes;
 using HttpServer_1.Controllers;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Mime;
@@ -74,18 +75,42 @@ namespace HttpServer_1
                     //метод GetContext блокирует текущий поток, ожидая получение запроса
                     var httpContext = listener.EndGetContext(result);
 
-                    if (!MethodHandler(httpContext))
-                        GetFile(httpContext);
-
+                    try
+                    {
+                        if (!MethodHandler(httpContext))
+                            GetFile(httpContext);
+                    }
+                    catch (Exception e)
+                    {
+                        var exception = (e.InnerException != null) ? e.InnerException : e;
+                        if (exception is ServerException)
+                        {
+                            var serverException = (ServerException)exception;
+                            ShowError(httpContext.Response, serverException.StatusCode);
+                        }
+                        else
+                        {
+                            ShowError(httpContext.Response, HttpStatusCode.InternalServerError);
+                            Console.WriteLine(exception.ToString());
+                        }
+                    }
 
                     Listening();
                 }
             }
             catch (Exception e)
             {
-                Stop();
                 Console.WriteLine(e.ToString());
             }
+        }
+
+        private static void ShowError(HttpListenerResponse response, HttpStatusCode statusCode)
+        {
+            response.StatusCode = (int)statusCode;
+            byte[] bufferError = Encoding.ASCII.GetBytes($"ERROR {(int)statusCode}: {statusCode}.");
+            Stream outputError = response.OutputStream;
+            outputError.Write(bufferError, 0, bufferError.Length);
+            outputError.Close();
         }
 
         public void Dispose()
@@ -174,51 +199,48 @@ namespace HttpServer_1
 
             if (method.GetCustomAttribute(typeof(OnlyForAuthorized)) != null)
             {
-                var attribute = method.GetCustomAttribute(typeof(OnlyForAuthorized)) as OnlyForAuthorized;
                 var cookie = request.Cookies.FirstOrDefault(c => c.Name == "SessionId");
                 if (cookie == null || !SessionManager.CheckSession(Guid.Parse(cookie.Value)))
                 {
-                    response.StatusCode = 401;
-                    byte[] bufferError = Encoding.ASCII.GetBytes("ERROR 401: Not authorized.");
-                    Stream outputError = response.OutputStream;   
-                    outputError.Write(bufferError, 0, bufferError.Length);
-
-                    outputError.Close();
-                    return true;
+                    throw new ServerException(HttpStatusCode.Unauthorized);
                 }
+            }
 
-                if (attribute.NeedAccountId)
+            if (method.GetCustomAttribute(typeof(NeedAccountId)) != null)
+            {
+                var cookie = request.Cookies.FirstOrDefault(c => c.Name == "SessionId");
+
+                int accountId = -1;
+                if (cookie != null && SessionManager.CheckSession(Guid.Parse(cookie.Value)))
                 {
-                    // SessionId = IsAuthorize:true
-                    // Id = 2
-
                     var session = SessionManager.GetSession(Guid.Parse(cookie.Value));
-                    var accountId = session.AccountId;
-                    queryParams = queryParams
-                        .Append(accountId)
-                        .ToArray();
+                    accountId = session.AccountId;
                 }
+                queryParams = queryParams
+                    .Append(accountId)
+                    .ToArray();
             }
 
             var methodResponse = (MethodResponse)method.Invoke(Activator.CreateInstance(controller), queryParams);
 
-            response.ContentType = "Application/json";
-
-            byte[] buffer = Encoding.ASCII.GetBytes(JsonSerializer.Serialize(methodResponse.Response));
-            response.ContentLength64 = buffer.Length;
-
             if (methodResponse.Cookie != null)
                 response.Cookies.Add(methodResponse.Cookie);
 
-            //if (method.Name == "Login")
-            //    response.Cookies.Add(new Cookie("NAME", "VALUE"));
+            byte[] buffer = new byte[0];
+            if (methodResponse.View != null)
+            {
+                buffer = methodResponse.View.Render(serverSetting.Path);
 
-            // if (_httpContext.Request.HttpMethod == "POST")
-            //    response.Redirect("https://store.steampowered.com/");
+                response.ContentType = "text/html";
+                response.ContentLength64 = buffer.Length;
+            }
+            if (methodResponse.Redirect != null)
+            {
+                response.Redirect(methodResponse.Redirect);
+            }
 
             Stream output = response.OutputStream;
             output.Write(buffer, 0, buffer.Length);
-
             output.Close();
 
             return true;
@@ -238,9 +260,7 @@ namespace HttpServer_1
             string contentType;
             if (Directory.Exists(serverSetting.Path))
             {
-
                 buffer = FileLoader.GetFile(serverSetting.Path, path, out contentType);
-
             }
             else
             {
@@ -252,12 +272,7 @@ namespace HttpServer_1
 
             if (buffer == null)
             {
-                contentType = "plain";
-
-                response.StatusCode = (int)HttpStatusCode.NotFound;
-                string err = "404 - not found";
-
-                buffer = Encoding.UTF8.GetBytes(err);
+                throw new ServerException(HttpStatusCode.NotFound);
             }
 
             response.Headers.Set("Content-Type", $"text/{contentType}");

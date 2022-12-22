@@ -92,7 +92,7 @@ namespace HttpServer_1.ORM
                 .Select(p => ((DBField)p.GetCustomAttribute(typeof(DBField))).ColumnName);
 
             var values = properties
-                .Select(p => $"'{p.GetValue(item)}'");
+                .Select(p => $"N'{p.GetValue(item)}'");
 
             // ["login", "password", "name","age"]
             // "login,password,name,age"

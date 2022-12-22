@@ -18,19 +18,19 @@ namespace HttpServer_1.Models
         [DBField("account_id")]
         public int AccountId { get; set; }
 
-        [DBField("comment_text")]
-        public string CommentText { get; set; }
+        [DBField("text")]
+        public string Text { get; set; }
 
         public Comment()
         {
         }
 
-        public Comment(int id, int recipeId, int accountId, string commentText)
+        public Comment(int id, int recipeId, int accountId, string text)
         {
             Id = id;
             RecipeId = recipeId;
             AccountId = accountId;
-            CommentText = commentText;
+            Text = text;
         }
     }
 }

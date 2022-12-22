@@ -12,5 +12,15 @@ namespace HttpServer_1.Controllers
     internal class Recipes : Controller
     {
         private static RecipeDAO recipeDAO = new RecipeDAO(connectionString);
+        private static CategoryDAO categoryDAO = new CategoryDAO(connectionString);
+
+        [HttpGET(@"^$")]
+        [NeedAccountId]
+        public MethodResponse ShowMainPage(int accountId)
+            => new MethodResponse(new View("/main.html", new { 
+                IsAuthorized = accountId >= 0,
+                Categories = categoryDAO.GetAll(),
+                Recipes = recipeDAO.GetAll(),
+            }));
     }
 }

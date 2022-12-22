@@ -12,7 +12,7 @@ namespace HttpServer_1.Models
     {
         public int Id { get; set; }
 
-        [DBField("ingredient_name")]
+        [DBField("name")]
         public string Name { get; set; }
 
         [DBField("measure")]

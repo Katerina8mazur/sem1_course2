@@ -11,10 +11,10 @@ namespace HttpServer_1.Models
     {
         public int Id { get; set; }
 
-        [DBField("category_name")]
+        [DBField("name")]
         public string Name { get; set; }
 
-        [DBField("category_description")]
+        [DBField("description")]
         public string Description { get; set; }
 
         [DBField("meal_time")]

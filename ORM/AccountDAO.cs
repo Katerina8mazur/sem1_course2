@@ -28,8 +28,15 @@ namespace HttpServer_1.ORM
             return (account != null) ? account.Id : -1;
         }
 
-        public void Insert(string login, string password)
-            => orm.Insert(new Account() { Login = login, Password = password });
+        public bool IsLoginAvailable(string login)
+        {
+            var accounts = GetAll();
+            var account = accounts.FirstOrDefault(a => a.Login == login);
+            return account == null;
+        }
+
+        public void Insert(string login, string name, string password)
+            => orm.Insert(new Account() { Login = login, Name = name, Password = password });
 
         public void Delete(int id)
             => orm.Delete(id);

@@ -17,7 +17,7 @@ namespace HttpServer_1.Models
         [DBField("password")]
         public string Password { get; set; }
 
-        [DBField("account_name")]
+        [DBField("name")]
         public string Name { get; set; }
 
         [DBField("avatar")]

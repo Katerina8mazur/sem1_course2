@@ -9,20 +9,21 @@ namespace HttpServer_1.Controllers
 {
     internal class MethodResponse
     {
-        public object? Response { get; set; }
+        public View View { get; set; }
+        public string Redirect { get; set; }
+
         public Cookie? Cookie { get; set; }
 
-        public MethodResponse() { }
-
-        protected MethodResponse(object? response, Cookie? cookie)
+        public MethodResponse(string redirect, Cookie? cookie = null)
         {
-            Response = response;
+            Redirect = redirect;
             Cookie = cookie;
         }
-    }
 
-    internal class MethodResponse<T> : MethodResponse
-    {
-        public MethodResponse(T? response, Cookie? cookie = null) : base(response, cookie) { }
+        public MethodResponse(View view, Cookie? cookie = null)
+        {
+            View = view;
+            Cookie = cookie;
+        }
     }
 }

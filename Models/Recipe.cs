@@ -11,7 +11,7 @@ namespace HttpServer_1.Models
     {
         public int Id { get; set; }
 
-        [DBField("dish_name")]
+        [DBField("name")]
         public string Name { get; set; }
 
         [DBField("category_id")]
@@ -20,16 +20,19 @@ namespace HttpServer_1.Models
         [DBField("account_id")]
         public int AccountId { get; set; }
 
-        [DBField("recipe_text")]
-        public string RecipeText { get; set; }
+        [DBField("text")]
+        public string Text { get; set; }
 
-        public Recipe(int id, string name, int categoryId, int accountId, string recipeText)
+        [DBField("picture")]
+        public string Picture { get; set; }
+
+        public Recipe(int id, string name, int categoryId, int accountId, string text)
         {
             Id = id;
             Name = name;
             CategoryId = categoryId;
             AccountId = accountId;
-            RecipeText = recipeText;
+            Text = text;
         }
 
         public Recipe()
