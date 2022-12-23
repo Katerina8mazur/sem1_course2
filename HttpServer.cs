@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace HttpServer_1
 {
@@ -194,7 +195,7 @@ namespace HttpServer_1
             // ["name", 15, 42]
             object[] queryParams = method.GetParameters()
                                 .Take(strParams.Length)
-                                .Select((p, i) => Convert.ChangeType(strParams[i], p.ParameterType))
+                                .Select((p, i) => Convert.ChangeType(HttpUtility.UrlDecode(strParams[i]), p.ParameterType))
                                 .ToArray();
 
             if (method.GetCustomAttribute(typeof(OnlyForAuthorized)) != null)

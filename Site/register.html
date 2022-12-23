@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+</head>
+
+<body>
+    <a href="/recipes">Главная страница</a>
+    <h1>Регистрация</h1>
+    <br>
+    <form name="register" method="POST" action="/accounts/register">
+        <div>Логин:</div>
+        <input name="login" value="{{ input_login }}" minlength="3" maxlength="30" required>
+        <div>Имя:</div>
+        <input name="name" value="{{ input_name }}" minlength="1" maxlength="20" required>
+        <div>Пароль:</div>
+        <input name="password" type="password" minlength="8" maxlength="30" required>
+        <div>Подтвердите пароль:</div>
+        <input name="password_confirm" type="password" minlength="8" maxlength="30" required>
+        <div>
+            <br>
+            <label><input name="remember-me" type="checkbox">Запомнить меня</label>
+        </div>
+        {{ if error == 'incorrect_login' }}
+        <div style="color:brown;"><br><b>Логин может содержать только латиницу и цифры!</b><br></div>
+        {{ end }}
+        {{ if error == 'existing_login' }}
+        <div style="color:brown;"><br><b>Такой логин уже существует!</b><br></div>
+        {{ end }}
+        {{ if error == 'incorrect_password' }}
+        <div style="color:brown;"><br><b>Пароли должны совпадать!</b><br></div>
+        {{ end }}
+        <div><button type="submit">Зарегистрироваться</button></div>
+    </form>
+    <br>
+    <a href="/accounts/login">Войти в существующий аккаунт</a>
+</body>
+
+</html>

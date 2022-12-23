@@ -52,6 +52,13 @@ namespace HttpServer_1.ORM
             orm.Update(id, account);
         }
 
+        public void ChangeName(int id, string name)
+        {
+            var account = orm.Select<Account>(id);
+            account.Name = name;
+            orm.Update(id, account);
+        }
+
         public void ChangePassword(int id, string password)
         {
             var account = orm.Select<Account>(id);

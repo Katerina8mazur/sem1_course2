@@ -29,7 +29,7 @@ namespace HttpServer_1.Controllers
         [HttpPOST("^login$")]
         public MethodResponse Login(string login, string password)
         {
-            var accountId = accountDAO.Check(HttpUtility.UrlDecode(login), HttpUtility.UrlDecode(password));
+            var accountId = accountDAO.Check(login, password);
 
             if (accountId >= 0)
             {
@@ -38,7 +38,7 @@ namespace HttpServer_1.Controllers
                 return new MethodResponse("/recipes", cookie);
             }
 
-            return new MethodResponse(new View("/login.html", new { Incorrect = true, InputLogin = HttpUtility.UrlDecode(login) }));
+            return new MethodResponse(new View("/login.html", new { Incorrect = true, InputLogin = login }));
         }
 
         [HttpPOST("^register$")]
@@ -46,16 +46,16 @@ namespace HttpServer_1.Controllers
         {
             if (password != passwordConfirm)
                 return new MethodResponse(new View("/register.html", new { Error = "incorrect_password", 
-                    InputLogin = HttpUtility.UrlDecode(login),
-                    InputName = HttpUtility.UrlDecode(name)
+                    InputLogin = login,
+                    InputName = name
                 }));
             if (!accountDAO.IsLoginAvailable(login))
                 return new MethodResponse(new View("/register.html", new { Error = "existing_login", 
-                    InputLogin = HttpUtility.UrlDecode(login),
-                    InputName = HttpUtility.UrlDecode(name)
+                    InputLogin = login,
+                    InputName = name
                 }));
 
-            accountDAO.Insert(HttpUtility.UrlDecode(login), HttpUtility.UrlDecode(name), HttpUtility.UrlDecode(password));
+            accountDAO.Insert(login, name, password);
             return Login(login, password);
         }
 
@@ -73,6 +73,22 @@ namespace HttpServer_1.Controllers
             if (account == null)
                 throw new ServerException(HttpStatusCode.NotFound);
             return new MethodResponse(new View("/profile.html", new { Profile = account, CurrentAccountId = currentAccountId }));
+        }
+
+        [HttpPOST("^edit$")]
+        [OnlyForAuthorized]
+        [NeedAccountId]
+        public MethodResponse EditMyPage(string login, string name, string password, int id)
+        {
+            var account = accountDAO.Get(id);
+            if (account.Login != login && login != "" && accountDAO.IsLoginAvailable(login))
+                accountDAO.ChangeLogin(id, login);
+            if (account.Name != name && name != "")
+                accountDAO.ChangeName(id, name);
+            if (account.Password != password && password != "")
+                accountDAO.ChangePassword(id, password);
+
+            return new MethodResponse("/accounts/my");
         }
 
         //[HttpGET("^$")]

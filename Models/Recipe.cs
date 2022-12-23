@@ -23,16 +23,17 @@ namespace HttpServer_1.Models
         [DBField("text")]
         public string Text { get; set; }
 
-        [DBField("picture")]
-        public string Picture { get; set; }
+        [DBField("ingredients")]
+        public string Ingredients { get; set; }
 
-        public Recipe(int id, string name, int categoryId, int accountId, string text)
+        public Recipe(int id, string name, int categoryId, int accountId, string text, string ingredients)
         {
             Id = id;
             Name = name;
             CategoryId = categoryId;
             AccountId = accountId;
             Text = text;
+            Ingredients = ingredients;
         }
 
         public Recipe()

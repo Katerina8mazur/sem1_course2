@@ -16,7 +16,7 @@ namespace HttpServer_1
             // cache.Set(key, value)
 
             var session = new Session(Guid.NewGuid(), accountId, login, DateTime.Now);
-            cache.Set(session.Id, session, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(2)));
+            cache.Set(session.Id, session);
             return session;
         }
 

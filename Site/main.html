@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная</title>
+</head>
+
+<body>
+    {{ if is_authorized }}
+        <a href="/accounts/my">Мой профиль</a>
+    {{ else }}
+        <a href="/accounts/login">Войти</a> или <a href="/accounts/register">зарегистрироваться</a>
+    {{ end }}
+    <h1>Рецепты:</h1>
+    <div> | {{ for category in categories }}<a href="/categories/{{ category.id }}">{{ category.name }}</a> | {{ end }}</div>
+    <br>
+    {{ for recipe in recipes }}
+        <div style="display:flex; border: 0.1px solid blue;">
+            <img style="width: 180px;height: 180px;object-fit: cover;"
+                src="" alt="image">
+            <div>
+                <div><b>{{ recipe.name }}</b></div>
+                <div><br>Ингредиенты: {{ recipe.ingredients }}</div>
+                <a href="/recipes/{{ recipe.id }}"><br><br>Подробнее</a>
+            </div>
+        </div>
+    {{ end }}
+    {{ if recipes.size == 0 }}
+        Нет рецептов.
+    {{ end }}
+</body>
+
+</html>
+
+<!--<br>
+<div style="display:flex; border: 0.1px solid blue;">
+    <img style="width: 180px;height: 180px;object-fit: cover;"
+        src="https://wallbox.ru/wallpapers/main2/201645/dzem-vypecka-bliny-banany-pancakes-banana.jpg" alt="image">
+    <div>
+        <div><b>Блинчики на кефире</b></div>
+        <div><br>Ингредиенты: кефир, вода, мука, яйца, сахар, масло растительное</div>
+        <a href="/recipe.html"><br><br>Подробнее</a>
+    </div>
+</div>-->

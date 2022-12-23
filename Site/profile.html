@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль</title>
+</head>
+<body>
+    <a href="/recipes">Главная страница</a>
+    <h1>Профиль</h1>
+    <form name="edit" method="POST" action="/accounts/edit">
+        <div>Логин:</div>
+        <input name="login" value="{{ profile.login }}" maxlength="30" minlength="3" {{ if current_account_id != profile.id }}readonly{{ end }}>
+        <div>Имя:</div>
+        <input name="name" value="{{ profile.name }}" maxlength="20" minlength="1" {{ if current_account_id != profile.id }}readonly{{ end }}>
+        {{ if current_account_id == profile.id }}
+        <div>Пароль:</div>
+        <input name="password" type="password" maxlength="30">
+        
+        <div><br><button type="submit">Сохранить</button></div>
+        
+        {{ end }}
+    </form>
+</body>
+</html>

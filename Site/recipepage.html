@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Блинчики на кефире</title>
+</head>
+<style>
+    .image {
+        padding-right: 10px;
+        width: 180px;
+        height: 180px;
+        object-fit: cover;
+    }
+</style>
+
+<body>
+    <div><a href="/accounts/login">Войти</a> или <a href="/accounts/register">зарегистрироваться</a></div>
+    <br>
+    <div>
+        <a href="/recipes">Главная страница</a>
+    </div>
+    <h1><b>Блинчики на кефире</b></h1>
+    <div>
+        Автор: <a href="/accounts/102">karina</a>
+        <div>Категория: <a href="/categories/201">завтраки</a></div>
+        <br>
+        <div>Ингредиенты:
+            <li>кефир (400 мл),</li>
+            <li>вода (400 мл),</li>
+            <li>мука (320 грамм),</li>
+            <li>яйца (3 штуки),</li>
+            <li>сахар (2 ст. ложки),</li>
+            <li>масло растительное (2 ст. ложки), </li>
+            <li>соль (1 ч. ложка), </li>
+            <li>сода (0.5 ч. ложки)</li>
+        </div>
+
+        <h2>Рецепт:</h2>
+
+        <div style="display:flex;"><img class="image"
+                src="https://img1.russianfood.com/dycontent/images_upl/390/big_389058.jpg" alt="">
+            В чашку наливаем тёплый кефир, добавляем соду. Перемешиваем и даём немного постоять, минут 5.</div>
+        <br>
+        <div style="display:flex;">
+            <img class="image" src="https://img1.russianfood.com/dycontent/images_upl/390/big_389059.jpg" alt="">
+            Добавляем яйца, соль и сахар, хорошо перемешиваем.
+        </div>
+        <br>
+        ...
+        <br>
+        <div style="display:flex;">
+            <img class="image" src="https://img1.russianfood.com/dycontent/images_upl/393/big_392074.jpg" alt="">
+            Блинчики тонкие, нежные с дырочками и очень вкусные. А если добавить сметану или джем или завернуть в них
+            любую начинку, тогда будет очень трудно остановиться. :)
+        </div>
+        <br>
+        <div style="display:flex; justify-content: space-evenly">
+            <button>Изменить публикацию</button>
+            <button>Удалить публикацию</button>
+        </div>
+
+        <br>
+        <h3>Комментарии:</h3>
+        <div><a href="/accounts/101">marina</a>: Круто!</div>
+        <br>
+        <div><a href="/accounts/102">karina</a>: Спасибо!</div>
+        <br>
+        <div><a href="/accounts/102">marina</a>: Пожалуйста!</div>
+        <br>
+
+        <form name="new-comment" method="POST" action="/comments/">
+            <textarea style="resize: none;" type="text" name="text" minlength="5" maxlength="300" required rows="6"
+                cols="50"></textarea>
+            <button>Отправить</button>
+        </form>
+    </div>
+</body>
+
+</html>
