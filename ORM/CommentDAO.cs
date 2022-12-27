@@ -20,5 +20,11 @@ namespace HttpServer_1.ORM
 
         public Comment? Get(int id)
             => orm.Select<Comment>(id);
+
+        public List<Comment> GetByPublicationId(int id)
+            => GetAll().Where(c => c.RecipeId == id).ToList();
+
+        internal void Insert(int recipeId, string text, int authorId)
+            => orm.Insert(new Comment() { RecipeId = recipeId, AuthorId = authorId, Text = text });
     }
 }

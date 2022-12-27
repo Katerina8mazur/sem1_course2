@@ -12,5 +12,6 @@ namespace HttpServer_1.Controllers
     internal class Categories: Controller
     {
         private static CategoryDAO categoryDAO = new CategoryDAO(connectionString);
+        public static CategoryDAO DAO { get => categoryDAO; }
     }
 }

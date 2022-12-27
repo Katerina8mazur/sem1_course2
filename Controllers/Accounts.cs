@@ -17,14 +17,15 @@ namespace HttpServer_1.Controllers
     internal class Accounts : Controller
     {
         private static AccountDAO accountDAO = new AccountDAO(connectionString);
+        public static AccountDAO DAO { get => accountDAO; }
 
         [HttpGET(@"^login$")]
         public MethodResponse ShowAuthorizationPage() 
-            => new MethodResponse(new View("/login.html"));
+            => new MethodResponse(new View("login.html"));
 
         [HttpGET(@"^register$")]
         public MethodResponse ShowRegistrationPage()
-            => new MethodResponse(new View("/register.html"));
+            => new MethodResponse(new View("register.html"));
 
         [HttpPOST("^login$")]
         public MethodResponse Login(string login, string password)
@@ -38,19 +39,19 @@ namespace HttpServer_1.Controllers
                 return new MethodResponse("/recipes", cookie);
             }
 
-            return new MethodResponse(new View("/login.html", new { Incorrect = true, InputLogin = login }));
+            return new MethodResponse(new View("login.html", new { Incorrect = true, InputLogin = login }));
         }
 
         [HttpPOST("^register$")]
         public MethodResponse Register(string login, string name, string password, string passwordConfirm)
         {
             if (password != passwordConfirm)
-                return new MethodResponse(new View("/register.html", new { Error = "incorrect_password", 
+                return new MethodResponse(new View("register.html", new { Error = "incorrect_password", 
                     InputLogin = login,
                     InputName = name
                 }));
             if (!accountDAO.IsLoginAvailable(login))
-                return new MethodResponse(new View("/register.html", new { Error = "existing_login", 
+                return new MethodResponse(new View("register.html", new { Error = "existing_login", 
                     InputLogin = login,
                     InputName = name
                 }));
@@ -72,7 +73,7 @@ namespace HttpServer_1.Controllers
             var account = accountDAO.Get(id);
             if (account == null)
                 throw new ServerException(HttpStatusCode.NotFound);
-            return new MethodResponse(new View("/profile.html", new { Profile = account, CurrentAccountId = currentAccountId }));
+            return new MethodResponse(new View("profile.html", new { Profile = account, CurrentAccountId = currentAccountId }));
         }
 
         [HttpPOST("^edit$")]

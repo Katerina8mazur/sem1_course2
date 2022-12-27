@@ -65,6 +65,7 @@
 
         {{ if current_account }}
         <form name="new-comment" method="POST" action="/comments/">
+            <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
             <textarea style="resize: none;" type="text" name="text" minlength="5" maxlength="300" required rows="6"
                 cols="50"></textarea>
             <button>Отправить</button>

@@ -16,7 +16,7 @@ namespace HttpServer_1
 
         public View(string htmlFilePath, object model = null)
         {
-            this.htmlFilePath = htmlFilePath;
+            this.htmlFilePath = (htmlFilePath[0] != '/') ? '/'+ htmlFilePath : htmlFilePath;
             this.model = (model != null) ? model : new { };
         }
 
