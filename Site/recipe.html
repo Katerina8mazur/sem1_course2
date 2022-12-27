@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ recipe.name }}</title>
+</head>
+<style>
+    .image {
+        padding-right: 10px;
+        width: 180px;
+        height: 180px;
+        object-fit: cover;
+    }
+</style>
+<body>
+    {{ if current_account }}
+    <a href="/accounts/my">Мой профиль</a>
+    {{ else }}
+    <a href="/accounts/login">Войти</a> или <a href="/accounts/register">зарегистрироваться</a>
+    {{ end }}
+    <br>
+    <div>
+        <a href="/recipes">Главная страница</a>
+    </div>
+    <h1><b> {{ recipe.name }} </b></h1>
+    <div>
+        Автор: <a href="/accounts/{{ recipe.author.id }}">{{ recipe.author.name }}</a>
+        <div>Категория: <a href="/categories/{{ recipe.category.id }}">{{ recipe.category.name }}</a></div>
+        <br>
+        <div>Ингредиенты:
+            {{ for ingredient in recipe.ingredients }}
+                <li>{{ ingredient }}</li>
+            {{ end }}
+        </div>
+
+        <h2>Рецепт:</h2>
+
+        {{ for paragraph in recipe.paragraphs }}
+        <div style="display:flex;"><img class="image"
+                src="{{ paragraph.image }}" alt="">
+            {{ paragraph.text }}</div>
+        <br>
+        {{ end }}
+        
+        {{ if current_account && current_account.id == recipe.author.id }}
+        <div style="display:flex; justify-content: space-evenly">
+            <button>Изменить публикацию</button>
+            <button>Удалить публикацию</button>
+        </div>
+        {{ end }}
+
+        <br>
+        <h3>Комментарии:</h3>
+        {{ if recipe.comments.size == 0 }}
+        <div>Комментариев нет.</div>
+        <br>
+        {{ end }}
+        {{ for comment in recipe.comments }}
+        <div><a href="/accounts/{{ comment.author.id }}">{{ comment.author.name }}</a>: {{ comment.text }}</div>
+        <br>
+        {{ end }}
+
+        {{ if current_account }}
+        <form name="new-comment" method="POST" action="/comments/">
+            <textarea style="resize: none;" type="text" name="text" minlength="5" maxlength="300" required rows="6"
+                cols="50"></textarea>
+            <button>Отправить</button>
+        </form>
+        {{ end }}
+    </div>
+</body>
+
+</html>

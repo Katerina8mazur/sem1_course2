@@ -7,7 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Главная</title>
 </head>
-
+<style>
+    .image {
+        padding-right: 10px;
+        width: 180px;
+        height: 180px;
+        object-fit: cover;
+    }
+</style>
 <body>
     {{ if is_authorized }}
         <a href="/accounts/my">Мой профиль</a>
@@ -19,11 +26,11 @@
     <br>
     {{ for recipe in recipes }}
         <div style="display:flex; border: 0.1px solid blue;">
-            <img style="width: 180px;height: 180px;object-fit: cover;"
-                src="" alt="image">
+            <img class="image"
+                src="{{ recipe.image }}" alt="image">
             <div>
                 <div><b>{{ recipe.name }}</b></div>
-                <div><br>Ингредиенты: {{ recipe.ingredients }}</div>
+                <div><br>Ингредиенты: {{ for ingredient in (recipe.ingredients | array.limit 5) }}{{ingredient}}, {{ end }}...</div>
                 <a href="/recipes/{{ recipe.id }}"><br><br>Подробнее</a>
             </div>
         </div>
