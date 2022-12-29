@@ -23,7 +23,7 @@
     {{ end }}
     <h1>Рецепты:</h1>
     <div style="display:flex;justify-content: space-between;">
-        <div> | {{ for category in categories }}<a href="/categories/{{ category.id }}">{{ category.name }}</a> | {{ end }}</div>
+        <div>{{ if !selected_category_id }}Все{{ else }}<a href="/recipes">Все</a>{{ end }} | {{ for category in categories }}{{ if selected_category_id && category.id == selected_category_id }}{{ category.name }}{{ else }}<a href="/categories/{{ category.id }}">{{ category.name }}</a>{{ end }} | {{ end }}</div>
         
         <form action="/recipes/new">
             {{ if is_authorized }}
@@ -49,14 +49,3 @@
 </body>
 
 </html>
-
-<!--<br>
-<div style="display:flex; border: 0.1px solid blue;">
-    <img style="width: 180px;height: 180px;object-fit: cover;"
-        src="https://wallbox.ru/wallpapers/main2/201645/dzem-vypecka-bliny-banany-pancakes-banana.jpg" alt="image">
-    <div>
-        <div><b>Блинчики на кефире</b></div>
-        <div><br>Ингредиенты: кефир, вода, мука, яйца, сахар, масло растительное</div>
-        <a href="/recipe.html"><br><br>Подробнее</a>
-    </div>
-</div>-->
