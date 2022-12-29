@@ -15,6 +15,7 @@
         object-fit: cover;
     }
 </style>
+
 <body>
     {{ if current_account }}
     <a href="/accounts/my">Мой профиль</a>
@@ -32,23 +33,27 @@
         <br>
         <div>Ингредиенты:
             {{ for ingredient in recipe.ingredients }}
-                <li>{{ ingredient }}</li>
+            <li>{{ ingredient }}</li>
             {{ end }}
         </div>
 
         <h2>Рецепт:</h2>
 
         {{ for paragraph in recipe.paragraphs }}
-        <div style="display:flex;"><img class="image"
-                src="{{ paragraph.image }}" alt="">
+        <div style="display:flex;"><img class="image" src="{{ paragraph.image }}" alt="">
             {{ paragraph.text }}</div>
         <br>
         {{ end }}
-        
+
         {{ if current_account && current_account.id == recipe.author.id }}
         <div style="display:flex; justify-content: space-evenly">
-            <button>Изменить публикацию</button>
-            <button>Удалить публикацию</button>
+            <form action="/recipes/edit/{{ recipe.id }}">
+                <button>Изменить публикацию</button>
+            </form>
+            <form method="POST" action="/recipes/delete">
+                <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+                <button>Удалить публикацию</button>
+            </form>
         </div>
         {{ end }}
 
@@ -58,7 +63,7 @@
         <div>Комментариев нет.</div>
         <br>
         {{ end }}
-        
+
         {{ for comment in recipe.comments }}
         <div><a href="/accounts/{{ comment.author.id }}">{{ comment.author.name }}</a>: {{ comment.text }}</div>
         <br>

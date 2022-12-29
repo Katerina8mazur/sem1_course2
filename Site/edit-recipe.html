@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Изменение рецепта</title>
+</head>
+
+<body>
+    <div>
+        <a href="/accounts/my">Мой профиль</a>
+    </div><br>
+    <div>
+        <a href="/recipes">Главная страница</a>
+    </div>
+
+    <h1>Изменение рецепта</h1>
+    <form name="edit-recipe" method="POST" action="/recipes/edit">
+        <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+        <div>Название:</div>
+        <input type="text" name="name" minlength="3" required value="{{ recipe.name }}">
+        <div>Категория:</div>
+        {{ for category in categories}}
+        <label><input type="radio" name="category" id="{{ category.id }}" value="{{ category.id }}" {{ if recipe.category_id == category.id }}checked{{ end }} required> {{ category.name }}</label>
+        {{ end }}
+        <div><br>Ингредиенты:</div>
+        <textarea placeholder="мука - 500 г
+яйца - 2 шт
+разрыхлитель - 0.5 ч.л.
+..." style="resize: none;" type="text" name="ingredients" maxlength="500" required rows="6" cols="25">{{ recipe.ingredients_string }}</textarea>
+        <div>Рецепт:</div>
+        <textarea placeholder="*ссылка на изображение*
+описание этапа
+
+*ссылка на изображение*
+описание этапа
+
+..." style="resize: none;" type="text" name="recipe" required rows="20" cols="100">{{ recipe.text }}</textarea>
+        <div><button>Сохранить</button></div>
+    </form>
+</body>
+
+</html>

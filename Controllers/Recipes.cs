@@ -1,10 +1,13 @@
 ﻿using HttpServer_1.Attributes;
+using HttpServer_1.Models;
 using HttpServer_1.ORM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static HttpServer_1.Models.Recipe;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -51,6 +54,47 @@ namespace HttpServer_1.Controllers
         {
             var newRecipeId = recipeDAO.Insert(name, categoryId, currentId, text, ingredients);
             return new MethodResponse($"/recipes/{newRecipeId}");
+        }
+
+        [HttpGET("^edit$")]
+        [OnlyForAuthorized]
+        [NeedAccountId]
+        public MethodResponse ShowRecipeEditingPage(string _, int recipeId, int currentId)
+        {
+            var recipe = recipeDAO.Get(recipeId);
+            if (recipe.AuthorId != currentId)
+                throw new ServerException(System.Net.HttpStatusCode.Forbidden);
+            return new MethodResponse(new View("edit-recipe.html", new
+            {
+                Recipe = recipe,
+                Categories = Categories.DAO.GetAll()
+            }));
+        }
+
+        [HttpPOST("^edit$")]
+        [OnlyForAuthorized]
+        [NeedAccountId]
+        public MethodResponse EditRecipe(int recipeId, string name, int categoryId, string ingredients, string text, int currentId)
+        {
+            var recipe = recipeDAO.Get(recipeId);
+            if (recipe.AuthorId != currentId)
+                throw new ServerException(System.Net.HttpStatusCode.Forbidden);
+
+            recipeDAO.Edit(recipeId, name, categoryId, text, ingredients);
+            return new MethodResponse($"/recipes/{recipeId}");
+        }
+
+        [HttpPOST("^delete$")]
+        [OnlyForAuthorized]
+        [NeedAccountId]
+        public MethodResponse DeleteRecipe(int recipeId, int currentId)
+        {
+            var recipe = recipeDAO.Get(recipeId);
+            if (recipe.AuthorId != currentId)
+                throw new ServerException(System.Net.HttpStatusCode.Forbidden);
+
+            recipeDAO.Delete(recipeId);
+            return new MethodResponse($"/recipes");
         }
     }
 }
