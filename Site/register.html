@@ -7,14 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Регистрация</title>
 </head>
-
 <body>
     <a href="/recipes">Главная страница</a>
     <h1>Регистрация</h1>
     <br>
-    <form name="register" method="POST" action="/accounts/register">
+    <form name="register" method="POST" action="/accounts/register" onsubmit="return check_form();">
         <div>Логин:</div>
-        <input name="login" value="{{ input_login }}" minlength="3" maxlength="30" required>
+        <input id="login" name="login" value="{{ input_login }}" minlength="3" maxlength="30" required>
         <div>Имя:</div>
         <input name="name" value="{{ input_name }}" minlength="1" maxlength="20" required>
         <div>Пароль:</div>
@@ -24,10 +23,9 @@
         <div>
             <br>
             <label><input name="remember-me" type="checkbox">Запомнить меня</label>
+            <input type="hidden" name="remember-me" value="false">
         </div>
-        {{ if error == 'incorrect_login' }}
-        <div style="color:brown;"><br><b>Логин может содержать только латиницу и цифры!</b><br></div>
-        {{ end }}
+        <div id="incorrect-login" style="display:none; color:brown;"><br><b>Логин может содержать только латиницу и цифры!</b><br></div>
         {{ if error == 'existing_login' }}
         <div style="color:brown;"><br><b>Такой логин уже существует!</b><br></div>
         {{ end }}
@@ -38,6 +36,19 @@
     </form>
     <br>
     <a href="/accounts/login">Войти в существующий аккаунт</a>
+    <script type="text/javascript">
+        function check_form() {
+            var login = document.getElementById("login").value;
+            if (/^[a-zA-Z0-9_]*$/.test(login)) {
+                document.getElementById("incorrect-login").style.display = "none";
+                return true;
+            }
+            else {
+                document.getElementById("incorrect-login").style.display = "block";
+                return false;
+            }
+        }
+    </script>
 </body>
 
 </html>

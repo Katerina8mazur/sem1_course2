@@ -9,19 +9,33 @@
 <body>
     <a href="/recipes">Главная страница</a>
     <h1>Профиль</h1>
-    <form name="edit" method="POST" action="/accounts/edit">
+    <form name="edit" method="POST" action="/accounts/edit" onsubmit="return check_form();">
         <div>Логин:</div>
-        <input name="login" value="{{ profile.login }}" maxlength="30" minlength="3" {{ if current_account_id != profile.id }}readonly{{ end }}>
+        <input id="login" name="login" value="{{ profile.login }}" maxlength="30" minlength="3" {{ if current_account_id != profile.id }}readonly{{ end }}>
         <div>Имя:</div>
         <input name="name" value="{{ profile.name }}" maxlength="20" minlength="1" {{ if current_account_id != profile.id }}readonly{{ end }}>
         {{ if current_account_id == profile.id }}
         <div>Пароль:</div>
         <input name="password" type="password" maxlength="30">
+        <div id="incorrect-login" style="display:none; color:brown;"><br><b>Логин может содержать только латиницу и цифры!</b><br></div>
         <div><br><button type="submit">Сохранить</button></div>
         {{ end }}
     </form>
     <form method="POST" action="/accounts/logout">
         <div><br><button type="submit">Выйти</button></div>
     </form>
+    <script type="text/javascript">
+        function check_form() {
+            var login = document.getElementById("login").value;
+            if (/^[a-zA-Z0-9_]*$/.test(login)) {
+                document.getElementById("incorrect-login").style.display = "none";
+                return true;
+            }
+            else {
+                document.getElementById("incorrect-login").style.display = "block";
+                return false;
+            }
+        }
+    </script>
 </body>
 </html>
