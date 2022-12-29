@@ -24,7 +24,7 @@ namespace HttpServer_1.ORM
         public int Check(string login, string password)
         {
             var accounts = GetAll();
-            var account = accounts.FirstOrDefault(a => a.Login == login && a.Password == password);
+            var account = accounts.FirstOrDefault(a => a.Login == login && a.Password == Hash.Calculate(password));
             return (account != null) ? account.Id : -1;
         }
 
@@ -36,13 +36,13 @@ namespace HttpServer_1.ORM
         }
 
         public void Insert(string login, string name, string password)
-            => orm.Insert(new Account() { Login = login, Name = name, Password = password });
+            => orm.Insert(new Account() { Login = login, Name = name, Password = Hash.Calculate(password) });
 
         public void Delete(int id)
             => orm.Delete(id);
 
         public void Update(int id, string login, string password)
-            => orm.Update(id, new Account() { Login = login, Password = password });
+            => orm.Update(id, new Account() { Login = login, Password = Hash.Calculate(password) });
         
 
         public void ChangeLogin(int id, string login)
@@ -62,7 +62,7 @@ namespace HttpServer_1.ORM
         public void ChangePassword(int id, string password)
         {
             var account = orm.Select<Account>(id);
-            account.Password = password;
+            account.Password = Hash.Calculate(password);
             orm.Update(id, account);
         }
     }

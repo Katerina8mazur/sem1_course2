@@ -23,7 +23,7 @@ namespace HttpServer_1.Controllers
                 IsAuthorized = accountId >= 0,
                 Categories = categoryDAO.GetAll(),
                 SelectedCategoryId = categoryId,
-                Recipes = Recipes.DAO.GetAll().Where(r => r.CategoryId == categoryId),
+                Recipes = Recipes.DAO.GetAll().Where(r => r.CategoryId == categoryId).ToList(),
             }));
     }
 }
