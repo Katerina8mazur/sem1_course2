@@ -13,8 +13,6 @@ namespace HttpServer_1
 
         public static Session CreateSession(int accountId, string login)
         {
-            // cache.Set(key, value)
-
             var session = new Session(Guid.NewGuid(), accountId, login, DateTime.Now);
             cache.Set(session.Id, session);
             return session;
@@ -25,5 +23,8 @@ namespace HttpServer_1
 
         public static Session GetSession(Guid id) 
             => cache.Get<Session>(id);
+
+        public static void DeleteSession(Guid id)
+            => cache.Remove(id);
     }
 }

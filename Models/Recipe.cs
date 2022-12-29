@@ -40,12 +40,13 @@ namespace HttpServer_1.Models
         [DBField("ingredients")]
         public string IngredientsString { get; set; }
 
-        public List<string> Ingredients { get => IngredientsString.Split("\\n").ToList(); }
+        public List<string> Ingredients { get => IngredientsString.Split("\r\n").Where(s => s != "").ToList(); }
         public Account Author { get => Accounts.DAO.Get(AuthorId); }
         public Category Category { get => Categories.DAO.Get(CategoryId); }
         public List<Comment> Comments { get => Controllers.Comments.DAO.GetByPublicationId(Id); }
         public List<Paragraph> Paragraphs { get => Text
-                .Split("\\n")
+                .Split("\r\n")
+                .Where(s => s != "")
                 .Select((value, index) => new { Index = index, Value = value })
                 .GroupBy(x => x.Index / 2)
                 .Select(g => new Paragraph(g.ElementAt(0).Value, g.ElementAt(1).Value))

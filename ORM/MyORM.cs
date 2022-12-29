@@ -82,7 +82,7 @@ namespace HttpServer_1.ORM
             return result;
         }
 
-        public void Insert<T>(T item)
+        public int Insert<T>(T item)
         {
             var properties = typeof(T)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -101,12 +101,12 @@ namespace HttpServer_1.ORM
             // ["'katya777'", "'12345678'", "'Katya'", "'19'"]
             // "'katya777','12345678','Katya','19'"
 
-            string sqlExpression = $"INSERT INTO [dbo].[{tableName}] ({string.Join(',', columns)}) VALUES ({string.Join(',', values)})";
+            string sqlExpression = $"INSERT INTO [dbo].[{tableName}] ({string.Join(',', columns)}) OUTPUT inserted.id as 'id' VALUES ({string.Join(',', values)})";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                command.ExecuteNonQuery();
+                return (int)command.ExecuteScalar();
             }
         }
 

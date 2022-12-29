@@ -21,9 +21,9 @@
         <div>Название:</div>
         <input type="text" name="name" minlength="3" required>
         <div>Категория:</div>
-        <label><input type="radio" name="category" id="1" required> Салаты</label>
-        <label><input type="radio" name="category" id="2"> Супы</label>
-        <label><input type="radio" name="category" id="3"> Десерты</label>
+        {{ for category in categories}}
+        <label><input type="radio" name="category" id="{{ category.id }}" value="{{ category.id }}" required> {{ category.name }}</label>
+        {{ end }}
         <div><br>Ингредиенты:</div>
         <textarea placeholder="мука - 500 г
 яйца - 2 шт

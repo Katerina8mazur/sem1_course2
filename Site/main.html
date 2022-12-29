@@ -22,7 +22,15 @@
         <a href="/accounts/login">Войти</a> или <a href="/accounts/register">зарегистрироваться</a>
     {{ end }}
     <h1>Рецепты:</h1>
-    <div> | {{ for category in categories }}<a href="/categories/{{ category.id }}">{{ category.name }}</a> | {{ end }}</div>
+    <div style="display:flex;justify-content: space-between;">
+        <div> | {{ for category in categories }}<a href="/categories/{{ category.id }}">{{ category.name }}</a> | {{ end }}</div>
+        
+        <form action="/recipes/new">
+            {{ if is_authorized }}
+            <button type="submit">Новый рецепт</button>
+            {{ end }}
+        </form>
+    </div>
     <br>
     {{ for recipe in recipes }}
         <div style="display:flex; border: 0.1px solid blue;">

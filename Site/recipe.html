@@ -58,6 +58,7 @@
         <div>Комментариев нет.</div>
         <br>
         {{ end }}
+        
         {{ for comment in recipe.comments }}
         <div><a href="/accounts/{{ comment.author.id }}">{{ comment.author.name }}</a>: {{ comment.text }}</div>
         <br>

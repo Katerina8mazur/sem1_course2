@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static HttpServer_1.Models.Recipe;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace HttpServer_1.Controllers
 {
@@ -35,6 +37,20 @@ namespace HttpServer_1.Controllers
                 CurrentAccount = Accounts.DAO.Get(currentAccountId),
                 Recipe = recipe,
             }));
+        }
+
+        [HttpGET("^new$")]
+        [OnlyForAuthorized]
+        public MethodResponse ShowRecipeCreatingPage()
+            => new MethodResponse(new View("new-recipe.html", new { Categories = Categories.DAO.GetAll() }));
+
+        [HttpPOST("^$")]
+        [OnlyForAuthorized]
+        [NeedAccountId]
+        public MethodResponse CreateRecipe(string name, int categoryId, string ingredients, string text, int currentId)
+        {
+            var newRecipeId = recipeDAO.Insert(name, categoryId, currentId, text, ingredients);
+            return new MethodResponse($"/recipes/{newRecipeId}");
         }
     }
 }
