@@ -28,13 +28,13 @@ namespace HttpServer_1.Controllers
             => new MethodResponse(new View("register.html"));
 
         [HttpPOST("^login$")]
-        public MethodResponse Login(string login, string password)
+        public MethodResponse Login(string login, string password, bool rememberMe)
         {
             var accountId = accountDAO.Check(login, password);
 
             if (accountId >= 0)
             {
-                var session = SessionManager.CreateSession(accountId, login);
+                var session = SessionManager.CreateSession(accountId, rememberMe);
                 Cookie? cookie = new Cookie("SessionId", session.Id.ToString(), "/");
                 return new MethodResponse("/recipes", cookie);
             }
@@ -43,7 +43,7 @@ namespace HttpServer_1.Controllers
         }
 
         [HttpPOST("^register$")]
-        public MethodResponse Register(string login, string name, string password, string passwordConfirm)
+        public MethodResponse Register(string login, string name, string password, string passwordConfirm, bool rememberMe)
         {
             if (password != passwordConfirm)
                 return new MethodResponse(new View("register.html", new { Error = "incorrect_password", 
@@ -57,7 +57,7 @@ namespace HttpServer_1.Controllers
                 }));
 
             accountDAO.Insert(login, name, password);
-            return Login(login, password);
+            return Login(login, password, rememberMe);
         }
 
         [HttpGET("^my$")]
@@ -90,6 +90,15 @@ namespace HttpServer_1.Controllers
                 accountDAO.ChangePassword(id, password);
 
             return new MethodResponse("/accounts/my");
+        }
+
+        [HttpPOST("^logout$")]
+        [OnlyForAuthorized]
+        [NeedSessionId]
+        public MethodResponse Logout(string _, Guid sessionId)
+        {
+            SessionManager.DeleteSession(sessionId);
+            return new MethodResponse("/recipes");
         }
 
         //[HttpGET("^$")]

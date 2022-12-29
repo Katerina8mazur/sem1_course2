@@ -2,6 +2,6 @@
 {
     internal abstract class Controller
     {
-        protected static string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Sem_1;Integrated Security=True";
+        public static string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Sem_1;Integrated Security=True";
     }
 }

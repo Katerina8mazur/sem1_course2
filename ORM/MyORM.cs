@@ -54,11 +54,11 @@ namespace HttpServer_1.ORM
             return result;
         }
 
-        public T? Select<T>(int id)
+        public T? Select<T>(object id)
         {
             T? result = default;
 
-            string sqlExpression = $"SELECT * FROM [dbo].[{tableName}] WHERE id = {id}";
+            string sqlExpression = $"SELECT * FROM [dbo].[{tableName}] WHERE id = '{id}'";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -82,7 +82,7 @@ namespace HttpServer_1.ORM
             return result;
         }
 
-        public int Insert<T>(T item)
+        public object Insert<T>(T item)
         {
             var properties = typeof(T)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -106,11 +106,11 @@ namespace HttpServer_1.ORM
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(sqlExpression, connection);
-                return (int)command.ExecuteScalar();
+                return command.ExecuteScalar();
             }
         }
 
-        public void Update<T>(int id, T item)
+        public void Update<T>(object id, T item)
         {
             var properties = typeof(T)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -133,7 +133,7 @@ namespace HttpServer_1.ORM
             // ["login = 'katya777'", "password = '12345678'", ...]
 
 
-            string sqlExpression = $"UPDATE [dbo].[{tableName}] SET {string.Join(',', pairs)} WHERE id = {id}";
+            string sqlExpression = $"UPDATE [dbo].[{tableName}] SET {string.Join(',', pairs)} WHERE id = '{id}'";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -142,9 +142,9 @@ namespace HttpServer_1.ORM
             }
         }
 
-        public void Delete(int id)
+        public void Delete(object id)
         {
-            string sqlExpression = $"DELETE FROM [dbo].[{tableName}] WHERE id = {id}";
+            string sqlExpression = $"DELETE FROM [dbo].[{tableName}] WHERE id = '{id}'";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();

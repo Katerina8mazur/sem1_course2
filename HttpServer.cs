@@ -222,6 +222,19 @@ namespace HttpServer_1
                     .ToArray();
             }
 
+            if (method.GetCustomAttribute(typeof(NeedSessionId)) != null)
+            {
+                var cookie = request.Cookies.FirstOrDefault(c => c.Name == "SessionId");
+
+                if (cookie == null || !SessionManager.CheckSession(Guid.Parse(cookie.Value)))
+                {
+                    throw new ServerException(HttpStatusCode.Unauthorized);
+                }
+                queryParams = queryParams
+                    .Append(Guid.Parse(cookie.Value))
+                    .ToArray();
+            }
+
             var methodResponse = (MethodResponse)method.Invoke(Activator.CreateInstance(controller), queryParams);
 
             if (methodResponse.Cookie != null)

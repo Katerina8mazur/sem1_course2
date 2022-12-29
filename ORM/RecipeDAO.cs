@@ -22,7 +22,7 @@ namespace HttpServer_1.ORM
             => orm.Select<Recipe>(id);
 
         public int Insert(string name, int categoryId, int authorId, string text, string ingredients)
-            => orm.Insert(new Recipe()
+            => (int)orm.Insert(new Recipe()
             { Name = name, CategoryId = categoryId, AuthorId = authorId, Text = text, IngredientsString = ingredients });
 
         public void Edit(int recipeId, string name, int categoryId, string text, string ingredients)
