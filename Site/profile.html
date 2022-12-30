@@ -21,9 +21,11 @@
         <div><br><button type="submit">Сохранить</button></div>
         {{ end }}
     </form>
+    {{ if current_account_id == profile.id }}
     <form method="POST" action="/accounts/logout">
         <div><br><button type="submit">Выйти</button></div>
     </form>
+    {{ end }}
     <script type="text/javascript">
         function check_form() {
             var login = document.getElementById("login").value;
