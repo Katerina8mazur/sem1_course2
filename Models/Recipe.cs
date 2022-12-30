@@ -44,16 +44,8 @@ namespace HttpServer_1.Models
         public Account Author { get => Accounts.DAO.Get(AuthorId); }
         public Category Category { get => Categories.DAO.Get(CategoryId); }
         public List<Comment> Comments { get => Controllers.Comments.DAO.GetByPublicationId(Id); }
-        public List<Paragraph> Paragraphs { get => Text
-                .Split("\r\n")
-                .Where(s => s != "")
-                .Select((value, index) => new { Index = index, Value = value })
-                .GroupBy(x => x.Index / 2)
-                .Select(g => new Paragraph(g.ElementAt(0).Value, g.ElementAt(1).Value))
-                .ToList();
-        }
+        public List<Paragraph> Paragraphs { get => GetParagraphes(Text);}
         public string Image { get => Paragraphs.Last().Image; }
-
 
         public Recipe(int id, string name, int categoryId, int authorId, string text, string ingredients)
         {
@@ -68,5 +60,13 @@ namespace HttpServer_1.Models
         public Recipe()
         {
         }
+
+        public static List<Paragraph>  GetParagraphes(string text) => text
+                .Split("\r\n")
+                .Where(s => s != "")
+                .Select((value, index) => new { Index = index, Value = value })
+                .GroupBy(x => x.Index / 2)
+                .Select(g => new Paragraph(g.ElementAt(0).Value, g.ElementAt(1).Value))
+                .ToList();
     }
 }

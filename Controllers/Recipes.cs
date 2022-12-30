@@ -52,8 +52,23 @@ namespace HttpServer_1.Controllers
         [NeedAccountId]
         public MethodResponse CreateRecipe(string name, int categoryId, string ingredients, string text, int currentId)
         {
-            var newRecipeId = recipeDAO.Insert(name, categoryId, currentId, text, ingredients);
-            return new MethodResponse($"/recipes/{newRecipeId}");
+            try
+            {
+                GetParagraphes(text);
+                var newRecipeId = recipeDAO.Insert(name, categoryId, currentId, text, ingredients);
+                return new MethodResponse($"/recipes/{newRecipeId}");
+            }
+            catch
+            {
+                return new MethodResponse(new View("new-recipe.html", new 
+                { 
+                    Incorrect = true,
+                    InputName = name,
+                    InputCategoryId = categoryId,
+                    InputIngredients = ingredients,
+                    InputText = text,
+                }));
+            }
         }
 
         [HttpGET("^edit$")]
@@ -79,9 +94,25 @@ namespace HttpServer_1.Controllers
             var recipe = recipeDAO.Get(recipeId);
             if (recipe.AuthorId != currentId)
                 throw new ServerException(System.Net.HttpStatusCode.Forbidden);
-
-            recipeDAO.Edit(recipeId, name, categoryId, text, ingredients);
-            return new MethodResponse($"/recipes/{recipeId}");
+            try
+            {
+                GetParagraphes(text);
+                recipeDAO.Edit(recipeId, name, categoryId, text, ingredients);
+                return new MethodResponse($"/recipes/{recipeId}");
+            }
+            catch
+            {
+                return new MethodResponse(new View("edit-recipe.html", new
+                {
+                    Recipe = recipe,
+                    Categories = Categories.DAO.GetAll(),
+                    Incorrect = true,
+                    InputName = name,
+                    InputCategoryId = categoryId,
+                    InputIngredients = ingredients,
+                    InputText = text,
+                }));
+            }
         }
 
         [HttpPOST("^delete$")]
